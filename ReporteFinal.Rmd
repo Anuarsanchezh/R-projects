@@ -1,0 +1,437 @@
+---
+title: "Curso intermedio de R por CIMAT (Reporte)"
+author: "Edgar Anuar Sánchez Hernández - eanuarsh@gmail.com"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción
+
+El software R es un entorno muy útil para realizar análisis estadísticos. Una principal característica de R es que incluye su propio lenguaje, el cual es relativamente simple, comparado con otros lenguajes de programación. Con este software es posible realizar cualquier tipo de operación matemática, así como generar gráficos y manipular bases de datos de manera simple. En este reporte se resumen algunos aspectos básicos de R que van desde la definición de los objetos del entorno R, la sintaxis del lenguaje, hasta la creación de gráficas. Cabe mencionar que el contenido de este documento está basado en el curso propedéutico para ingreso a la Especialidad en Métodos Estadísticos por el CIMAT, México. Se pretende que este documento sirva como referencia rápida para el transcurso de la especialidad así como para cualquier persona interesada en aprender los aspectos básicos de R en poco tiempo.
+
+
+
+
+## Desarrollo
+
+En esta sección se resumen las 8 unidades del curso intermedio de R. También se proporcionan ejemplos de código de cada tema, así como los *outputs* de cada chunk.
+
+### Unidad 1: Vectores y Matrices
+
+1. Operación potencia.
+: Calcula la potencia, entrada por entrada, de un vector. 
+: Ejemplo:
+```{r e1, echo=TRUE, indent="     "}
+v <- c(2,3.14,5/2,0.7,11)
+v^3
+```
+
+2. Función `seq()`.
+: Genera un vector especificando una secuencia deseada.
+: Por ejemplo, si queremos crear un vector que inicie en 0 y aumente de 2 en 2 hasta el 13 escribiríamos
+```{r e2, echo=TRUE, indent="     "}
+seq(0,13,by=2)
+```
+O bien si queremos un vector de 20 entradas que inicie en 132 y disminuya hasta el 99 escribimos:
+```{r e3, echo=TRUE, indent="     "}
+seq(132,99,length.out = 20)
+```
+3. Vectores de enteros o con tamaño de paso igual a uno:
+: Se pueden generar vectores cuyas entradas incrementen o decrementen de uno en uno con el siguiente código corto:
+```{r e4, echo=TRUE, indent="     "}
+0:10 # Vector del 0 al 10 aumentando de 1 en 1
+-5:5 # Vector del -5 al 5 aumentando de 1 en 1
+15:-15 # Vector del 15 al -15 disminuyendo de 1 en 1
+```
+
+
+4. Función `rep()`.
+: Genera un vector en el que todas sus entradas contienenen el mismo elemento. Este elemento puede ser un número, cadena o vector. La función `rep()` hace referencia a _repetición_.
+: Ejemplos
+```{r e5, echo=TRUE, indent="     "}
+rep("hola mundo", 10) # Vector con la cadena "hola mundo" repetida 10 veces
+rep(-1:2,3) # Vector con el vector -1, 0, 1, 2, repetido 3 veces
+rep(0:1, each = 10) # Vector que repite 10 veces cada elemento de 0:1
+```
+
+5. Generando matrices (Recordatorio).
+: Es posible declarar matrices de dos formas: por filas o por columnas. Aquí un ejemplo de cada forma para una matriz $A$.
+: Sea la matriz $A=\begin{bmatrix} \begin{array}{ll} 1 & 5  \\ 2 & 6  \\
+3 & 7  \\ 4 & 8 \end{array} \end{bmatrix}$. Los siguientes códigos declaran a la matriz por fila y por columna, respectivamente.
+```{r e6, echo=TRUE, indent="     "}
+v1 <- c(1,5,2,6,3,7,4,8) #vector con las filas de la matriz
+v2 <- c(1,2,3,4,5,6,7,8) #vector con las columnas de la matriz
+matrix(data=v1,nrow=4, byrow = TRUE)
+matrix(data=v2, ncol = 2, byrow = FALSE)
+```
+Notar que ambas matrices son la misma. La única diferencia es cómo se declararon.
+
+6. Operaciones con matrices.
+    * Transpuesta: El comando `t(A)` calcula la transpuesta de la matriz `A`. Por ejemplo:
+```{r e7, echo=TRUE, indent="        "}
+A <- matrix(seq(2,12,by = 2), ncol = 2, byrow = TRUE )
+A
+t(A)
+```
+    * Diagonal: El comando `diag(A)` regresa la diagonal de la matriz `A`. Por ejemplo:
+```{r e8, echo=TRUE, indent="        "}
+A <- matrix(seq(3,27,by = 3), ncol = 3, byrow = TRUE )
+A
+diag(A)
+```    
+    * Traza: La traza de una matriz `A` se puede calcular mediante `sum(diag(A))`. Por ejemplo
+```{r e9, echo=TRUE, indent="        "}
+A <- matrix(seq(3,27,by = 3), ncol = 3, byrow = TRUE )
+A
+sum(diag(A))
+```    
+    * Determinante: La función `det(A)` regresa el determinante de la matriz `A`. Ejemplos:
+```{r e10, echo=TRUE, indent="        "}
+A <- matrix(rep(1:3, 3), nrow = 3, byrow = TRUE )
+A
+det(A)
+A <- matrix(c(1,4,7,2,3,8,5,4,9), nrow = 3, byrow = TRUE )
+A
+det(A)
+```     
+    * Inversa: La función `solve(A)` regresa la inversa de la matriz `A` siempre que sea una matriz invertible. Ejemplos:
+```{r e11, echo=TRUE, indent="        "}
+A <- matrix(c(1,4,7,2,3,8,5,4,9), nrow = 3, byrow = TRUE )
+A
+solve(A)
+```   
+    
+7. Vectores y valores propios.
+: La función `eigen(A)` regresa una lista donde el primer elemento son valores propios y el segundo elemento son los vectores propios de la matriz `A`. Los eigenvalores se muestran en orden decreciente y los eigenvectores se muestran el columnas ordenados según los eigenvalores. Los vectores propios se muestran normalizados. Ejemplos:
+```{r e12, echo=TRUE, indent="        "}
+A <- matrix(c(3,0,0,5), nrow = 2, byrow = TRUE )
+A
+eigen(A)
+B <- matrix(c(1,0,5,2), ncol = 2, byrow = TRUE)
+B
+eigen(B)
+```   
+
+8. Sistemas de ecuaciones.
+: Dado un sistema de ecuaciones escrito en forma matricial: $A x = b$, el código `solve(A,b)` nos regresa la solución del sistema en forma de vector columna.
+: Por ejemplo, dado el sistema
+$$
+\left\{ \matrix{
+                  x + 2y + 3z = 2 \hfill \cr 
+                  x + 3y - z =  - 2 \hfill \cr 
+                  3x + 4y + 3z = 0 \hfill \cr}  \right.
+$$
+Es posible resolverlo con el siguiente código:
+```{r e13, echo=TRUE, indent="     "}
+A <- matrix(c(1,2,3,1,3,-1,3,4,3), nrow = 3, byrow = TRUE)
+b <- matrix(c(2,-2,0), ncol = 1)
+A
+b
+solve(A,b)
+```
+
+9. Funciones `rbind()` y `cbind()`.
+: La **función `rbind(A,v)`** agrega el vector `v` como última fila de la matriz `A`. Si se escribe como `rbind(v,A)` agrega el vector `v` como primera fila de la matriz `A`. 
+: NOTA: `rbind()` hace referencia a _row bind_.
+: Ejemplos:
+```{r e14, echo=TRUE, indent="     "}
+A <- matrix(c(1,2,3,4,5,6,7,8,9), nrow = 3)
+v <- c(0.1,0.2,0.3)
+A
+rbind(A,v)
+rbind(v,A)
+```
+La **función `cbind(A,v)`** agrega el vector `v` como última columna de la matriz `A`. Si se escribe como `cbind(v,A)` agrega el vector `v` como primera columna de la matriz `A`. 
+NOTA: `cbind()` hace referencia a _column bind_.
+Ejemplos:
+```{r e15, echo=TRUE, indent="     "}
+A <- matrix(c(1,2,3,4,5,6,7,8,9), nrow = 3)
+v <- c(0.1,0.2,0.3)
+A
+cbind(A,v)
+cbind(v,A)
+```
+
+### Unidad 2: Importar datos a R
+Para todas las importaciones, podemos hacer uso de la interfaz gráfica de RStudio Cloud, siguiendo los siguientes pasos:
+1. En panel derecho inferior, pestaña "Files", clic en "Upload" para subir los archivos a la nube.
+2. En el panel derecho superior, pestaña Environment, clic en "Import Dataset".
+
+a. Archivos Excel.
+: Clic en "From Excel". Si solicita instalar paquetes, dar clic en "sí". Seleccionar el archivo a importar. Se mostrarán las columnas de la tabla importada y se copiará el código generado. Este se muestra aquí abajo.
+
+```{r e16, echo=TRUE, indent="     "}
+#library(readxl)
+#DatosExcel <- read_excel("Datos.xlsx")
+#View(Datos) #Esta instrucción no se puede ejecutar en Markdown, sólo en RStudio
+#DatosExcel #Muestra los datos importados
+```
+
+b. Archivos *.csv: Instalar el paquete `readr` y después usar aluno de los siguientes códigos:
+: Clic en "From text (readr)". Si solicita instalar paquetes, dar clic en "sí". Seleccionar el archivo a importar. Seleccionar el delimitador (Comma). Se mostrarán las columnas de la tabla importada y se copiará el código generado. Este se muestra aquí abajo:
+```{r e17, echo=TRUE, indent="     "}
+#library(readr)
+#DatosCSV <- read_csv("Datos.csv")
+#View(DatosCSV) #Esta instrucción no se puede ejecutar en Markdown, sólo en RStudio
+#DatosCSV # Muestra los datos en Markdown
+```
+
+c. Archivos *.prn: El separador es un espacio en blanco.
+: Dar clic en la opción "From text (base)". 
+```{r e18, echo=TRUE, indent="     "}
+#Datos_Espacios <- read.csv("/cloud/project/Datos_Espacios.prn", sep="")
+#Datos_Espacios
+```
+
+
+### Unidad 3: Data frame
+Son tablas bidimensionales similares a las tablas de Excel.
+
+1. Declarar un data frame.
+: Se declaran con el siguiente código
+```{r e19, echo=TRUE, indent="     "}
+df <- data.frame(col1 = c(1,2,3,4,5), # df es el nombre asignado a la data frame
+                 col2=c("A", "B","C", "D","E"),
+                 col3 = c(FALSE, TRUE,FALSE, TRUE, FALSE))
+
+df # Visualizar la data frame en Markdown
+#View(nombre_dataFrame) #instrucción opara ver el data frame en Rstudio
+```
+2. Consultas básicas.
+: Se utilizan los siguientes códigos para realizar las consultas especificadas:
+```{r e20, echo=TRUE, indent="     "}
+df$col1 # Regresa la columna de nombre "col1"
+df[,1] # Regresa la columna 1 (todas las filas)
+df[,c(1,2)] # Regresa las columnas 1 y 2 (todas sus filas)
+df[c(1,5),] #Regresa las filas 1 y 5 (todas sus columnas)
+```
+
+3. Operadores comparativos y lógicos.
+: Los operadores comparativos y lógicos se utilizan para realizar consultas con filtros deseados. Abajo algunos ejemplos:
+```{r e21, echo=TRUE, indent="     "}
+df[df$col1>2 & df$col2 == "D",]
+df[df$col1 <= 4 | df$col3 == "FALSE",]
+```
+
+4. Agregar o eliminar columnas/filas
+: Podemos agregar o quitar columnas y filas a un data frame con los siguientes códigos:
+```{r e22, echo=TRUE, indent="     "}
+df #Muestra mi data frame
+df$nuevacol <- 10:14 #se le asigna un nombre a la nueva columna y el vector de valores que contendrá
+df # muestra mi data frame con la columna agregada
+
+df$col1 <- NULL #borra la columna de nombre "col1"
+df
+
+df <- rbind(df, c("O", TRUE, 15)) # agrega la fila especificada al final
+df
+df <- df[-1,] # Elimina la fila 1 del data frame
+df
+```
+
+5. Función `summary`.
+: LA función `summary(df)` nos regresa un resumen de cada columna del data frame. Incluye el valor mínimo y máximo, los cuartiles, la media y para variables categóricas nos regresa el conteo de valores distintos. Por ejemplo:
+```{r e23, echo=TRUE, indent="     "}
+iris #esta es un data frame incluida en R
+summary(iris)
+```
+
+### Unidad 4: Listas en R.
+
+En R las listas pueden almacenar distintos tipos de valores en una misma lista. Los siguientes códigos sirven para manipular listas.
+
+
+```{r e24, echo=TRUE}
+mi_lista <- list(nombre = "Anuar", edad = 32, edocivil = FALSE, cursos = 1:5) # DEclara una lista asignando nombres a cada elemento y el valor almacenado en cada elemento.
+mi_lista
+
+mi_lista$nombre #Regresa el valor almacenado en "nombre" de la lista
+mi_lista[[2]] #Regresa el segundo elemento de la lista
+
+mi_lista$profesion <- "Físico" #agrega una variable de nombre "profesion" con valor "Físico" a la lista
+mi_lista
+
+mi_lista$edocivil <- NULL # Elimina la variable "edocivil" de la lista
+mi_lista
+```
+
+
+### Unidad 5: Programación en R.
+1. Condicional `if`.
+: Esta instrucción se utiliza para ejecutar una línea o líneas de código si cierta condición se cumple. Si la condición no se cumple se puede especificar si se requiere realizar otra acción o ninguna.
+: Ejemplos
+```{r e25, echo=TRUE, indent="     "}
+nombre <- "Anuar"
+if(nombre == "Anuar"){
+  print("Bienvenido Anuar")
+}else{
+  print("¡Tú no eres Anuar!")
+}
+```
+
+2. Condicional `ifelse()`.
+: Es una forma autocontenida para escribir condicionales `if`. Esta forma se recomienda utilizarla cuando se hagan comparaciones con los valores de un vector.
+: La sintaxis general es: `ifelse(condición, sentencia if TRUE, sentencia if FALSE)`. Por ejemplo:
+
+```{r e26, echo=TRUE, indent="     "}
+edocivil <- rep(c(0,1,1), each = 4)
+ifelse(edocivil == 1, "Casado", "Soltero")
+```
+
+3. Bucle `while`.
+: Se utiliza para repetir la ejecución de una o varias líneas de código mientras se cumpla una condición. Cuando la condición deja de cumplirse, el bucle termina.
+: La sintaxis general es `while(condición){líneas de código a repetir}`. Por ejemplo:
+```{r e27, echo=TRUE, indent="     "}
+notas <- c(8,7,9,7,9,10)
+n <- length(notas)
+i <- 1 # Es necesario inicializar el contador
+suma <- 0
+while(i <= n){
+  suma <- suma + notas[i]
+  i <- i + 1 #Es necesario indicar que el contador aumente en cada iteración
+}
+print(suma/n)
+```
+
+4. Bucle `for`.
+: En R este bucle es útil para repetir una o varias líneas de código mientras se itera en los elementos de un vector.
+: Sintaxis general: `for(i in vector){líneas de código}`.
+: Ejemplo
+```{r e28, echo=TRUE, indent="     "}
+notas <- c(8,7,9,7,9,10)
+suma <- 0
+# No es necesario inicializar el contador
+for(nota in notas){
+  suma <- suma + nota
+  #No se debe indicar que el contador aumente en cada iteración
+}
+print(suma/length(notas))
+```
+
+
+### Unidad 6: Funciones.
+1. Declaración de funciones (recordatorio).
+: Para declarar una función se utiliza la siguiente sintaxis:
+```{r e29, echo=TRUE, indent="     "}
+mi_funcion <- function(){
+  print("Acabas de llamar a mi_funcion")
+}
+mi_funcion()
+```
+2. Funciones con y sin parámetros y con parámetros por defecto.
+: Podemos especificar los parámetros que necesite nuestra función dentro de los paréntesis de `function()`. Es claro que si no se especifican parámetros entonces se deben declarar, fuera de esta.
+: También es posible establecer valores por defecto para algunos parámetros. Estos pueden cambiarse al llamar a la función según el uso que se le de.
+: A continuación algunos ejemplos de funciones con y sin parámetros.
+```{r e30, echo=TRUE, indent="     "}
+nombre <- "Anuar"
+imprimenombre <- function(){
+  cat("Tu nombre es", nombre)
+}
+imprimenombre()
+
+# La siguiente función realiza un test para determinar si una matriz dada es invertible o no
+is_invertible <- function(matriz){
+  d <- det(matriz)
+  if(d != 0){
+    return(TRUE)
+  }else{
+    return(FALSE)
+  }
+}
+# Usando la función para una matiz en específico
+A <- matrix(c(3,4,3,4), nrow = 2, byrow = TRUE)
+print(is_invertible(A))
+
+#Un ejemplo de una función con parámetros por defecto es:
+matrix(c(3,4,3,4), nrow = 2, byrow = FALSE)
+#Equivale a
+matrix(c(3,4,3,4), nrow = 2)
+#Donde por defecto el parámetro byrow toma el valor FALSE
+```
+
+
+### Unidad 7: Gráficos en R
+1. Gráficas
+: Lo primero que debemois hacer es declarar los valores de las variables $x$ y $y$.
+```{r e31, echo=TRUE, indent="     "}
+x <- seq(-2,2, length.out = 20)
+y <- dnorm(x, mean = 0, sd = 1) # calcula la distribución normal N(0,1) de cada valor del vector x
+```
+    * Función `plot()`. Una vez declarados los ejes usaremos `plot(x,y)` para obtener la gráfica de los puntos. A continuacón algunos ejemplos de gráficas que pueden obtenerse:
+```{r e32, echo=TRUE, indent="       "}
+x <- seq(-2,2, length.out = 20)
+y <- dnorm(x, mean = 0, sd = 1)
+plot(x,y, pch = 17)
+plot(x,y, type = "l", lty = 3, lwd = 2.5, col = 640, main = "Distribución Normal", sub = "Subtítulo del gráfico",xlab = "X",ylab="y",font.main=4,font.lab=4)
+
+```
+    * Función `barplot()`. A continuación se muestran algunos ejemplos de las opciones que se pueden modificar de las gráficas de barras en R.
+```{r e33, echo=TRUE, indent="       "}
+barplot(c(3,6,9,5), names.arg = c("a", "b", "c", "d"), col = c("red", "grey", "violet", "orange"), density = 10 )
+```    
+    * Función `hist()`. A continuación algunas propiedades de la función `hist()` que pueden explorarse:
+```{r e34, echo=TRUE, indent="       "}
+mis_datos <- c(4,5,4,6,7,3,7,6,5,4,6,7,4,5,6,6,6,5,7)
+hist(mis_datos,
+     xlim = c(2,8),
+     col = colors()[600],
+     freq = FALSE,
+     breaks = 5
+     )
+```    
+    * Función `pie()`. Un ejemplo de las opciones de esta función:
+```{r e35, echo=TRUE, indent="       "}
+porcentajes <- c(.3,.2,.3,.1,.5,.5)
+etiquetas <- c("MÉXICO", "USA", "CANADA", "GUATEMALA", "EL SALVADOR", "HONDURAS")
+pie(porcentajes,
+    labels = etiquetas,
+    col = rainbow(length(porcentajes)),
+    radius = 1
+    )
+legend("right",
+       etiquetas,
+       cex = 0.8,
+       fill = rainbow(length(porcentajes))
+       )
+```
+
+2. Función `curve()`.
+: Se utiliza para graficar funciones matemáticas.
+: Ejemplo: graficar la función $f(x) = e^{-x^2}$ en el intervalo $[-2,2]$:
+```{r e36, echo=TRUE, indent="     "}
+curve(exp(-x^2),
+      from = -2,
+      to = 2,
+      main = "Gráfica de una función",
+      col = "blue",
+      lwd = 1.2 #grosor
+      )
+```
+3. `ggplot2` y `geom_point()`.
+: Primero instalar ggplot2: install.packages('ggplot2') en la consola.
+: Llamar la librería:
+```{r e37, echo=TRUE, indent="     "}
+library(ggplot2) #Llamar la librería
+alumnos <- data.frame(estatura = runif(20, min =160,max = 190 ),
+                     peso = runif(20, min=60, max=100), 
+                     semestre = sample(c(1,3,5,7,9),20,replace = TRUE)
+                     )
+
+alumnos$semestre <- as.factor(alumnos$semestre)# Convertir la variable "semestre" a variable categórica
+alumnos
+
+ggplot(alumnos, aes(x=peso, y=estatura)) +
+  geom_point(shape = 2, col = "blue")+ # Código básico
+  labs(title="Gráfica de dispersión")
+
+```
+
+## Conclusión
+Como observamos a lo largo del documento, los vectores, listas y dataframes son objetos principales de R. Con estos podemos crear desde listas simples de números, bases de datos y hasta gráficas tanto de datos como de funciones matemáticas. Además podemos realizar todo tipo de operaciones matemáticas, que abarcan desde la aritmética, álgebra lineal, probabilidad y estadística. Un elemento que hay que resaltar de R es su capacidad de tener un lenguaje de programación integrado, el cual complementa todas sus posibles manipulaciones de objetos matemáticos. Estas dos características hacen que R sea una herramienta con mucho potencial para los análisis y solución numérica de problemas en la industria y en específico para el análisis estadístico de datos de cualquier índole.
+Esperamos que este documento sea sólo la primera parte de un documento de referencia rápida para todo aquel interesado en aprender o repasar R.
+
+
