@@ -1,0 +1,184 @@
+---
+title: 'Actividad 4: Regresión Lineal Múltiple'
+subtitle: "Especialidad en Métodos Estadísticos a Distancia - CIMAT"
+author: "Edgar Anuar Sánchez Hernández"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+#install.packages("car")
+knitr::opts_chunk$set(echo = TRUE)
+# Chunk options
+knitr::opts_chunk$set(
+ fig.width = 4,
+ fig.asp = 0.7,
+ out.width = "80%"
+)
+
+```
+
+# Ejercicio
+
+Los datos de una encuesta sobre la satisfacción de los pacientes en un hospital se muestran en la siguiente tabla. Las variables independientes son la edad del paciente, un índice de gravedad de la enfermedad (los valores más altos indican mayor gravedad), una variable indicadora que denota si el paciente es un paciente médico (0) o un paciente quirúrgico (1) y, un índice de ansiedad (los valores más altos indican mayor ansiedad). Los datos también se encuentran en el archivo denominado “Datos_actividad.xlsx”.
+
+
+# Solución
+
+## Importando los datos
+
+```{r echo=T, warning=FALSE, fig.align = 'center'}
+library(readxl)
+library(ggplot2)
+library("ggthemes")
+
+Datos_actividad <- read_excel("Datos_actividad.xlsx", 
+    col_types = c("numeric", "numeric", "numeric", 
+        "numeric", "numeric"))
+
+```
+
+## a) Graficas de dispersión de las variables numéricas
+```{r fig.align = 'center'}
+pairs(~Satisfacción + Ansiedad + Edad + Gravedad, data =  Datos_actividad)
+
+ggplot(data = Datos_actividad) + 
+  geom_point(mapping = aes(x = Gravedad, y = Satisfacción),color = "red", size = 3, shape = 1) +
+  theme_solarized_2()
+
+ggplot(data = Datos_actividad) + 
+  geom_point(mapping = aes(x = Edad, y = Satisfacción),color = "red", size = 3, shape = 1) +
+  theme_solarized_2()
+
+ggplot(data = Datos_actividad) + 
+  geom_point(mapping = aes(x = Gravedad, y = Satisfacción),color = "red", size = 3, shape = 1) +
+  theme_solarized_2()
+
+```
+
+
+
+## b) Modelo lineal múltiple
+
+```{r echo=T, warning=FALSE}
+modelo <- lm(Satisfacción ~ Ansiedad + Gravedad + Edad + Médico_Quirúrgico, data = Datos_actividad)
+summary(modelo)
+
+```
+
+
+La ecuación estimada del modelo de regresión lineal mútiple es:
+
+$$S =143.86 + 1.30a - 0.58g -1.11 e + 0.41m$$
+
+Donde 
+$S$ = Satisfacción, $a$ = índice de ansiedad, $g$ = índice de gravedad de la enfermedad, $e$ = edad, $m$ = tipo de paciente (médico o quirúrgico).
+
+
+## c) $R^2$ ajustado
+
+Observando la información obtenida por el modelo lineal, se tiene que el valor de $R^2$ ajustado es de 0.8843.
+
+## d) Método Stepwise:
+
+```{r echo=T, warning=FALSE}
+# Stepwise
+
+modelo_completo<-lm(Satisfacción~.,data = Datos_actividad)
+modelo_reducido<-lm(Satisfacción~1,data = Datos_actividad)
+####Seleccion de var stepwise
+step(modelo_reducido,scope=list(lower=modelo_reducido,
+                                upper=modelo_completo),
+     direction = "both")
+
+
+```
+
+Se obtiene que el mejor modelo para estas variables incluye solamente Gravedad y Edad como variables independientes:
+
+```{r echo=T, warning=FALSE}
+# Mejor modelo
+mejor_modelo <- lm(Satisfacción ~ Gravedad + Edad, data = Datos_actividad)
+summary(mejor_modelo)
+
+```
+
+Y la ecuación de este mejor modelo es:
+
+$$S =143.4720 - 0.5560g -1.0311e$$
+
+Donde 
+$S$ = Satisfacción, $g$ = índice de gravedad de la enfermedad y $e$ = edad.
+
+
+El valor de $R^2$ ajustado para este mejor modelo es de 0.8872, que es ligeramente mejor que el valor del modelo completo: 0.8843. Es ligeramente mayor pero contiene dos variables menos. Es decir, es una mejora consirable del modelo.
+
+## e) Analizando multicolinealidad (Calculando el VIF)
+
+Para este mejor modelo se tiene lo siguiente:
+
+```{r echo=T, warning=FALSE}
+#install.packages("car")
+library(car)
+car::vif(mejor_modelo)
+```
+
+Es decir, como los valores del VIF de cada variable son cercanos a 1, se puede concluir que el modelo no tiene problemas de multicolinealidad.
+
+## f) Estimaciones
+
+Estimar la media del nivel de satisfacción para un paciente quirúrgico de edad de 60 años, gravedad de 45 y un nivel de ansiedad de 3. Utilice la ecuación de regresión establecida en el inciso d) y solamente las variables involucradas en este. Proporcione la estimación puntual y mediante un intervalo de confianza. Utilizar un nivel de confianza del 95%.
+
+Utilizando el mejor modelo, se tiene:
+
+```{r echo=T, warning=FALSE}
+dato <- data.frame(Gravedad = 45, Edad = 60)
+predict(mejor_modelo, newdata = dato,
+        interval = 'confidence', level = 0.95, se.fit = TRUE)
+
+```
+
+El modelo predice que el nivel de satisfacción para un paciente quirúrgico de edad de 60 años, gravedad de 45 está entre 52.82 y 60.35 con un nivel de confianza del 95%.
+
+## g) Verifique los supuestos del modelo
+
+### Normalidad
+
+```{r echo=T, warning=FALSE, fig.align = 'center'}
+resi_rlm6<-rstandard(mejor_modelo) #Se obtienen los residuales estandarizados
+qqnorm(resi_rlm6) #Gráfico QQ
+qqline(resi_rlm6) #Línea del gráfico QQ
+shapiro.test(resi_rlm6) #Prueba de Shapiro-Wilks usando residuales estandarizados
+
+```
+
+Se concluiye que, con un nivel de significancia de 0.05, el p-value=0.29>0.05, por lo que NO se rechaza la hipótesis nula. Es decir, los residuales estandarizados provienen de una distrinución Normal.
+
+
+### Varianza constante
+
+```{r echo=T, warning=FALSE, fig.align = 'center'}
+predichos_rlm6<-predict(mejor_modelo) #Se obtienen los valores predichos
+# Gráfico para observar varianza de los residuales
+plot(predichos_rlm6,resi_rlm6,xlab = "Predichos",ylab="Residuales estandarizados")
+
+```
+
+De la gráfica se obsberva cierta homogeneidad en las varianzas, aunque se recomienda obtener más evidencia para valores predichos menores a 50.
+
+### Outliers
+
+Elaboramos gráficos de dispersión para las variables Satisfacción vs. Edad y Satisfacción vs. Gravedad.
+
+```{r fig.align = 'center'}
+ggplot(data = Datos_actividad) + 
+  geom_point(mapping = aes(x = Edad, y = Satisfacción),color = "red", size = 3, shape = 1) +
+  theme_solarized_2()
+
+ggplot(data = Datos_actividad) + 
+  geom_point(mapping = aes(x = Gravedad, y = Satisfacción),color = "red", size = 3, shape = 1) +
+  theme_solarized_2()
+```
+
+
+En las gráficas, no se observa algún punto en los diagramas de dispersión que se separe del resto de puntos, por lo que se concluye que no existen puntos atípicos.
