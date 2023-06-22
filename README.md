@@ -1,2 +1,2 @@
-# resumenR
-Resumen de los aspecos básicos de R. Este documento pretende ser de referencia rápida para el autor y para cualquier persona interesada en aprender R.
+This respository contains several basic projects implemented with R.
+Mostly are related with Statistics and Data Science.
